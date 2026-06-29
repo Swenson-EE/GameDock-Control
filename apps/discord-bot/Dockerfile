@@ -1,4 +1,4 @@
-FROM node:22-alpine AS builder
+FROM node:22-alpine AS base
 
 # Go to the app directory
 WORKDIR /app
@@ -14,12 +14,19 @@ COPY tsconfig.json ./
 COPY src ./src
 
 
+# Development stage
+FROM base as development
+
+# Run the app in development mode
+ENV NODE_ENV=development
+CMD ["npm", "run", "dev"]
+
+
+# Production stage
+FROM base as production
+
 # Build project
 RUN npm run build
-
-
-# Runtime stage
-FROM node:22-alpine
 
 WORKDIR /app
 
