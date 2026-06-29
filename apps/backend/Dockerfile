@@ -30,7 +30,15 @@ COPY --chown=node:node --from=builder /app/dist ./dist
 ENV PORT=8080
 EXPOSE 8080
 
-ENV NODE_ENV=production
+# Development stage
+FROM runner AS development
 
+ENV NODE_ENV=development
+CMD ["npm", "run", "dev"]
+
+
+FROM runner AS production
+
+ENV NODE_ENV=production
 CMD ["npm", "start"]
 
