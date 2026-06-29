@@ -1,0 +1,57 @@
+services:
+  backend:
+    build:
+      context: ../../apps/backend/
+      dockerfile: Dockerfile
+      target: development
+    container_name: gamedock-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+    develop:
+      watch:
+        - action: sync
+          path: ../../apps/backend/src
+          target: ../../apps/backend/src
+          ignore: 
+            - node_modules/
+        - action: rebuild
+          path: ../../apps/backend/package.json
+        
+
+  frontend:
+    build:
+      context: ../../apps/frontend/
+      dockerfile: Dockerfile
+      target: development
+    container_name: gamedock-frontend
+    ports:
+      - "3400:3400"
+    environment:
+      - NODE_ENV=development
+
+  discord:
+    build: 
+      context: ../../apps/discord-bot/
+      dockerfile: Dockerfile
+      target: development
+    container_name: gamedock-discord
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - .env.discord
+
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    restart: unless-stopped
+    ports: 
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
+
+  
