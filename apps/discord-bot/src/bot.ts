@@ -21,22 +21,58 @@
  *   SOFTWARE.
  */
 
-import { Client } from 'discord.js';
-import { GatewayIntentBits } from 'discord.js';
+import "reflect-metadata";
 import 'dotenv/config';
 
+import { Client } from 'discordx';
+import { GatewayIntentBits } from 'discord.js';
 
-const client = new Client({
+import { dirname, importx } from '@discordx/importer';
+
+
+export const bot = new Client({
     intents: [
-        GatewayIntentBits.Guilds
-    ]
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages
+    ],
+
+    botGuilds: process.env.BOT_GUILDS ? [process.env.BOT_GUILDS] : [],
+
+    silent: false
 })
 
-client.once('clientReady', () => {
-    console.log(`Logged in as ${client.user?.tag}!`);
+bot.once('clientReady', async () => {
+    await bot.initApplicationCommands();
+    console.log(`Loaded application commands for ${bot.user?.tag}!`);
+});
+
+bot.on('interactionCreate', (interaction) => {
+    bot.executeInteraction(interaction);
+});
+
+bot.on('messageCreate', (message) => {
+    bot.executeCommand(message);
 });
 
 
-client.login(process.env.DISCORD_TOKEN);
+async function run()
+{
+    // load commands/events
+    const extension = import.meta.url.endsWith(".ts") ? ".ts" : ".js";
 
+    await importx(`${dirname(import.meta.url)}/{events,commands}/**/*${extension}`).then(() => {
+        console.log("Commands and events loaded");
+    });
+
+
+
+    if (!process.env.DISCORD_TOKEN) {
+        throw new Error("Environment variable 'DISCORD_TOKEN' is not set");
+    }
+
+    await bot.login(process.env.DISCORD_TOKEN!);
+}
+
+
+run();
 
