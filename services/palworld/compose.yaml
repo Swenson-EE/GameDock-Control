@@ -1,0 +1,28 @@
+services:
+   palworld:
+      image: thijsvanloef/palworld-server-docker:latest
+      restart: unless-stopped
+      container_name: palworld-server
+      stop_grace_period: 30s # Set to however long you are willing to wait for the container to gracefully stop
+      ports:
+        - "${PALWORLD_GAME_PORT:-8211}:${PALWORLD_GAME_PORT:-8211}/udp"     # Game port 
+        - "${PALWORLD_COMMUNITY_PORT:-27015}:${PALWORLD_COMMUNITY_PORT:-27015}/udp"   # Required if you want to show up in the community servers tab
+        - "${PALWORLD_REST_API_PORT:-8212}:${PALWORLD_REST_API_PORT:-8212}/tcp" # REST API port
+      environment:
+         PUID: 1000
+         PGID: 1000
+         PORT: "${PALWORLD_GAME_PORT:-8211}" # Optional but recommended
+         PLAYERS: "${PALWORLD_PLAYERS:-8}" # Optional but recommended
+         SERVER_PASSWORD: "${PALWORLD_SERVER_PASSWORD:-worldofpals}" # Optional but recommended
+         MULTITHREADING: true
+         REST_API_ENABLED: true
+         REST_API_PORT: "${PALWORLD_REST_API_PORT:-8212}"
+         TZ: "UTC"
+         ADMIN_PASSWORD: "${PALWORLD_ADMIN_PASSWORD:-adminPasswordHere}"
+         COMMUNITY: false  # Enable this if you want your server to show up in the community servers tab, USE WITH SERVER_PASSWORD!
+         SERVER_NAME: "${PALWORLD_SERVER_NAME:-Palworld Server}" 
+         SERVER_DESCRIPTION: "${PALWORLD_SERVER_DESCRIPTION:-Palworld Server.}"
+         CROSSPLAY_PLATFORMS: "(Steam,Xbox,PS5,Mac)"
+      volumes:
+         - ./palworld:/palworld/
+  
