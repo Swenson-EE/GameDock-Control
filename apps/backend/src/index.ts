@@ -21,7 +21,9 @@
  *   SOFTWARE.
  */
 
+import 'dotenv/config';
 import Fastify from 'fastify';
+
 
 const fastify = Fastify({
     logger: true
