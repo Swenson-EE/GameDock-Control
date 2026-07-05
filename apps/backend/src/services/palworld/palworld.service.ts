@@ -47,6 +47,8 @@ export class PalworldService
             }
         })
 
+        
+
     }
 
     async info()
@@ -61,10 +63,26 @@ export class PalworldService
         return response.data
     }
 
-    async getPlayers()
+    async getPlayers(): Promise<{ 'players': any[] }>
     {
         const response = await this.pal_api.get('/players')
         return response.data
+    }
+
+    async findPlayerByName(name: string): Promise<any | undefined>
+    {
+        const { players } = await this.getPlayers();
+
+        for (const player of players)
+        {
+            console.log(player)
+            if (player['name'] === name)
+            {
+                return player;
+            }
+        }
+
+        return undefined;
     }
 
 
@@ -97,6 +115,42 @@ export class PalworldService
     {
        const response = await this.pal_api.post('/save');
        return response.status;
+    }
+
+
+    async kickPlayer(userid: string, message?: string)
+    {
+        const response = await this.pal_api.post('/kick', {
+            userid,
+            message: message ?? `You have been kicked`
+        })
+        return response.status;
+    }
+
+    async banPlayer(userid: string, message: string)
+    {
+        const response = await this.pal_api.post('/ban', {
+            userid,
+            message
+        })
+        return response.status;
+    }
+
+    async unbanPlayer(userid: string)
+    {
+        const response = await this.pal_api.post('/unban', {
+            userid
+        })
+        return response.status;
+    }
+
+    async kickAllPlayers()
+    {
+        const { players } = await this.getPlayers();
+        for (const player of players)
+        {
+            console.log('Kicking player: ', player['name'])
+        }       
     }
 
 }

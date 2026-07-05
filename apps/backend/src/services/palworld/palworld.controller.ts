@@ -72,4 +72,57 @@ export class PalworldController
         return reply.status(saveStatus).send()
     }
 
+
+    async kickPlayer(request: FastifyRequest, reply: FastifyReply)
+    {
+        const { name, message } = request.body as { name: string, message?: string };
+        const player = await this.service.findPlayerByName(name);
+
+        if (player === undefined)
+        {
+            return reply.status(400).send();
+        }
+
+        const kickStatus = await this.service.kickPlayer(player['userId'], message);
+        return reply.status(kickStatus).send();
+    }
+
+
+    async kickAllPlayers(request: FastifyRequest, reply: FastifyReply)
+    {
+        const { players } = await this.service.getPlayers();
+         
+        const message = 'The server is current undergoing maintenance or a restart. Please check back in a few minutes.';
+        const playerKickPromises = players.map(player => {
+            return this.service.kickPlayer(player['userId'], message)
+        })
+
+        const data = await Promise.all(playerKickPromises);
+        console.log('Kick data:')
+        console.log(data)
+
+        return reply.status(200).send();
+    }
+
+    
+    async banPlayer(request: FastifyRequest, reply: FastifyReply)
+    {
+        const { name, message } = request.body as { name: string, message?: string };
+        const player = await this.service.findPlayerByName(name);
+
+        if (player === undefined)
+        {
+            return reply.status(400).send();
+        }
+
+        const banStatus = await this.service.banPlayer(player['userId'], message);
+        return reply.status(banStatus).send();
+    }
+
+    async unbanPlayer(request: FastifyRequest, reply: FastifyReply)
+    {
+        const { userid } = request.body as { userid: string };
+        const unbanStatus = await this.service.unbanPlayer(userid);
+        return reply.status(unbanStatus).send();
+    }
 }

@@ -38,4 +38,9 @@ export const palworldRoutes: FastifyPluginAsync = async (fastify: FastifyInstanc
     fastify.post('/restart', controller.restart.bind(controller));
     fastify.post('/stop', controller.stop.bind(controller));
     fastify.post('/save', controller.save.bind(controller));
+
+    fastify.post('/kick', controller.kickPlayer.bind(controller));
+    fastify.post('/kick-all', controller.kickAllPlayers.bind(controller));
+    fastify.post('/ban', controller.banPlayer.bind(controller));
+    fastify.post('/unban', controller.unbanPlayer.bind(controller));
 }

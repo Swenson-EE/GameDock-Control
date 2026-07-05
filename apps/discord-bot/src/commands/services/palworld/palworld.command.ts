@@ -53,6 +53,7 @@ export class PalworldCommand
                 'Content-Type': 'application/json'
             }
         })
+
     }
 
     @Slash({
@@ -138,20 +139,6 @@ export class PalworldCommand
         shutdownMessage: string = `Server is saving in ${waitTime} seconds.`,
         interaction: CommandInteraction
     ): Promise<void> {
-        /*
-        const response = await fetch(`http://localhost:3000/services/palworld/stop`, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                waitTime: waitTime,
-                message: shutdownMessage
-            })
-        });
-        */
-
-        //const { success, message } = await response.json();
         const response = await this.api.post('/stop', {
             waitTime: waitTime,
             message: shutdownMessage
@@ -183,7 +170,7 @@ export class PalworldCommand
 
     @Slash({
         name: "restart",
-        "description": "Restart the Palworld server"
+        description: "Restart the Palworld server"
     })
     @SlashGroup("palworld")
     async restart(
@@ -198,6 +185,182 @@ export class PalworldCommand
             flags: MessageFlags.Ephemeral
         })
     }
+
+
+    @Slash({
+        name: "kick",
+        description: "Kick the specified player"
+    })
+    @SlashGroup("palworld")
+    async kickPlayer(
+        @SlashOption({
+            name: "name",
+            description: "Name of the player",
+            required: true,
+            type: ApplicationCommandOptionType.String
+        }) 
+        name: string,
+        @SlashOption({
+            name: "message",
+            description: "The message to display to the kicked player",
+            required: false,
+            type: ApplicationCommandOptionType.String
+        })
+        message: string | undefined,
+        interaction: CommandInteraction
+    )
+    {
+        try
+        {
+            const response = await this.api.post('/kick', {
+            name,
+            message
+            })
+            const content = response.status === 200 ? `Kicked ${name}` : `Failed to kick ${name}`;
+
+            await interaction.reply({
+                content,
+                flags: MessageFlags.Ephemeral
+            })
+        }
+        catch (error)
+        {
+            await interaction.reply({
+                content: `Failed to kick Player: ${name}`,
+                flags: MessageFlags.Ephemeral
+            })
+        }
+
+        
+    }
+
+    @Slash({
+        name: "kickall",
+        description: "Kick the all players"
+    })
+    @SlashGroup("palworld")
+    async kickAllPlayers(
+        @SlashOption({
+            name: "message",
+            description: "The message to display to the kicked player",
+            required: false,
+            type: ApplicationCommandOptionType.String
+        })
+        message: string | undefined,
+        interaction: CommandInteraction
+    )
+    {
+        try
+        {
+            const response = await this.api.post('/kick-all', {
+            message
+            })
+            const content = response.status === 200 ? `Kicked all players` : `Failed to kick all players`;
+
+            await interaction.reply({
+                content,
+                flags: MessageFlags.Ephemeral
+            })
+        }
+        catch (error)
+        {
+            await interaction.reply({
+                content: `Failed to kick all player`,
+                flags: MessageFlags.Ephemeral
+            })
+        }
+
+        
+    }
+
+
+    @Slash({
+        name: "ban",
+        description: "Ban the specified player"
+    })
+    @SlashGroup("palworld")
+    async banPlayer(
+        @SlashOption({
+            name: "name",
+            description: "Name of the player",
+            required: true,
+            type: ApplicationCommandOptionType.String
+        }) 
+        name: string,
+        @SlashOption({
+            name: "message",
+            description: "The message to display to the kicked player",
+            required: false,
+            type: ApplicationCommandOptionType.String
+        })
+        message: string | undefined,
+        interaction: CommandInteraction
+    )
+    {
+        try
+        {
+            const response = await this.api.post('/ban', {
+            name,
+            message
+            })
+            const content = response.status === 200 ? `Banned ${name}` : `Failed to ban ${name}`;
+
+            await interaction.reply({
+                content,
+                flags: MessageFlags.Ephemeral
+            })
+        }
+        catch (error)
+        {
+            await interaction.reply({
+                content: `Failed to ban Player: ${name}`,
+                flags: MessageFlags.Ephemeral
+            })
+        }
+
+        
+    }
+
+
+    @Slash({
+        name: "unban",
+        description: "Unban the specified player"
+    })
+    @SlashGroup("palworld")
+    async unbanPlayer(
+        @SlashOption({
+            name: "userid",
+            description: "User ID of the player",
+            required: true,
+            type: ApplicationCommandOptionType.String
+        }) 
+        userid: string,
+        interaction: CommandInteraction
+    )
+    {
+        try
+        {
+            const response = await this.api.post('/unban', {
+            name
+            })
+            const content = response.status === 200 ? `Unbanned player with id: ${userid}` : `Failed to unban player with id: ${userid}`;
+
+            await interaction.reply({
+                content,
+                flags: MessageFlags.Ephemeral
+            })
+        }
+        catch (error)
+        {
+            await interaction.reply({
+                content: `Failed to unban player with id: ${userid}`,
+                flags: MessageFlags.Ephemeral
+            })
+        }
+
+        
+    }
+
 
 
 
