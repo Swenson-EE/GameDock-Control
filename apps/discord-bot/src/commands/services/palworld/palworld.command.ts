@@ -70,7 +70,7 @@ export class PalworldCommand
 
     @Slash({
         name: "metrics",
-        description: "Get Palworld server "
+        description: "Get Palworld server metrics"
     })
     @SlashGroup("palworld")
     async metrics(interaction: CommandInteraction): Promise<void> {
@@ -80,5 +80,126 @@ export class PalworldCommand
             flags: MessageFlags.Ephemeral
         })
     }
+
+    @Slash({
+        name: "players",
+        description: "Get Palworld server players"
+    })
+    @SlashGroup("palworld")
+    async players(interaction: CommandInteraction): Promise<void> {
+        const response = await this.api.get('/players');
+        await interaction.reply({
+            content: JSON.stringify(response.data, null, 2),
+            flags: MessageFlags.Ephemeral
+        })
+    }
+
+
+    @Slash({
+        name: "start",
+        "description": "Start the Palworld server"
+    })
+    @SlashGroup("palworld")
+    async start(
+        interaction: CommandInteraction
+    ) : Promise<void> {
+        const response = await this.api.post('/start', {})
+        const message = response.status === 200 ? "Palworld Server Started." : "Failed to start Palworld server";
+
+        await interaction.reply({
+            content: message,
+            flags: MessageFlags.Ephemeral
+        })
+    }
+
+
+
+
+
+    @Slash({
+        name: "stop",
+        "description": "Stop the Palworld server"
+    })
+    @SlashGroup("palworld")
+    async stop(
+        @SlashOption({
+            name: "wait-time",
+            description: "Time in seconds to wait before saving",
+            required: false,
+            type: ApplicationCommandOptionType.Number
+        })
+        waitTime: number = 60,
+        @SlashOption({
+            name: "message",
+            description: "Time in seconds to wait before saving",
+            required: false,
+            type: ApplicationCommandOptionType.String
+        })
+        shutdownMessage: string = `Server is saving in ${waitTime} seconds.`,
+        interaction: CommandInteraction
+    ): Promise<void> {
+        /*
+        const response = await fetch(`http://localhost:3000/services/palworld/stop`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                waitTime: waitTime,
+                message: shutdownMessage
+            })
+        });
+        */
+
+        //const { success, message } = await response.json();
+        const response = await this.api.post('/stop', {
+            waitTime: waitTime,
+            message: shutdownMessage
+        })
+        const message = response.status === 200 ? "Palworld Server Stopped." : "Failed to stop Palworld server";
+
+        await interaction.reply({
+            content: message,
+            flags: MessageFlags.Ephemeral
+        })
+    }
+
+    @Slash({
+        name: "save",
+        description: "Save the Palworld server"
+    })
+    @SlashGroup("palworld")
+    async save(
+        interaction: CommandInteraction
+    ): Promise<void> {
+        const response = await this.api.post('/save', {});
+        const message = response.status === 200 ? "Palworld server saved." : "Failed to save Palworld server.";
+
+        await interaction.reply({
+            content: message,
+            flags: MessageFlags.Ephemeral
+        })
+    }
+
+    @Slash({
+        name: "restart",
+        "description": "Restart the Palworld server"
+    })
+    @SlashGroup("palworld")
+    async restart(
+        interaction: CommandInteraction
+    ) : Promise<void>
+    {
+        const response = await this.api.post('/restart', {});
+        const message = response.status === 200 ? "Restarting Palworld server" : "Failed to restart Palworld Server"
+        
+        await interaction.reply({
+            content: message,
+            flags: MessageFlags.Ephemeral
+        })
+    }
+
+
+
 }
 

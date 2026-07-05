@@ -60,5 +60,44 @@ export class PalworldService
         const response = await this.pal_api.get('/metrics')
         return response.data
     }
+
+    async getPlayers()
+    {
+        const response = await this.pal_api.get('/players')
+        return response.data
+    }
+
+
+    async start()
+    {
+        // TODO: Startup palworld server
+    }
+
+    async restart()
+    {
+        const saveResponse = this.Save();
+        if (await this.Save() !== 200) {
+            return saveResponse;
+        }
+
+        // TODO: Restart server
+        return 200;
+    }
+
+    async stop(waitTime?: number, message?: string)
+    {
+        const response = await this.pal_api.post('/stop', {
+            waittime: waitTime ?? 30,
+            message: message ?? `Server is shutting down in ${waitTime ?? 30} seconds.`
+        })
+        return response.status;
+    }
+
+    async Save(): Promise<number>
+    {
+       const response = await this.pal_api.post('/save');
+       return response.status;
+    }
+
 }
 

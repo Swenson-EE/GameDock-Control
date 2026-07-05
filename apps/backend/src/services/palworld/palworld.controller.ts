@@ -39,4 +39,37 @@ export class PalworldController
         const metrics = await this.service.metrics();
         return reply.send(metrics);
     }
+
+    async getPlayers(request: FastifyRequest, reply: FastifyReply)
+    {
+        const players = await this.service.getPlayers()
+        return reply.send(players)
+    }
+
+
+    async start(request: FastifyRequest, reply: FastifyReply)
+    {
+        await this.service.start();
+        return reply.status(200).send()
+    }
+
+    async restart(request: FastifyRequest, reply: FastifyReply)
+    {
+        await this.service.restart();
+        return reply.status(200).send()
+    }
+
+    async stop(request: FastifyRequest, reply: FastifyReply)
+    {
+        const { waitTime, message } = request.body as { waitTime?: number; message?: string };
+        const stopStatus = await this.service.stop(waitTime, message);
+        return reply.status(stopStatus).send()
+    }
+
+    async save(request: FastifyRequest, reply: FastifyReply)
+    {
+        const saveStatus = await this.service.Save();
+        return reply.status(saveStatus).send()
+    }
+
 }

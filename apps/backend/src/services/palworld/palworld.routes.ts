@@ -32,4 +32,10 @@ export const palworldRoutes: FastifyPluginAsync = async (fastify: FastifyInstanc
 
     fastify.get('/info', controller.info.bind(controller));
     fastify.get('/metrics', controller.metrics.bind(controller));
+    fastify.get('/players', controller.getPlayers.bind(controller));
+
+    fastify.post('/start', controller.start.bind(controller));
+    fastify.post('/restart', controller.restart.bind(controller));
+    fastify.post('/stop', controller.stop.bind(controller));
+    fastify.post('/save', controller.save.bind(controller));
 }
