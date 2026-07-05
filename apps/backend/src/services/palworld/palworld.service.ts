@@ -21,34 +21,38 @@
  *   SOFTWARE.
  */
 
-import 'dotenv/config';
-import Fastify from 'fastify';
+import axios, { type AxiosInstance } from "axios";
 
 
-const fastify = Fastify({
-    logger: true
-})
+export class PalworldService
+{
+    private readonly host_name: string;
+    private readonly port: number;
+    private credentials;
 
-fastify.get('/ping', async(request, reply) => {
-    return { status: 'pong!' };
-})
+    private readonly pal_api: AxiosInstance;
 
+    constructor(host_name?: string, port?: number)
+    {
+        this.host_name = host_name ?? process.env.PALWORLD_API_HOST ?? 'localhost';
+        this.port = port ?? parseInt(process.env.PALWORLD_API_PORT ?? '8212');
 
-import { palworldRoutes } from './services/palworld/palworld.routes';
-fastify.register(palworldRoutes, { prefix: '/services/palworld' });
+        this.credentials = btoa(`${process.env.PALWORLD_USERNAME}:${process.env.PALWORLD_ADMIN_PASSWORD}`);
 
+        this.pal_api = axios.create({
+            baseURL: `http://${this.host_name}:${this.port}/v1/api`,
+            headers: {
+                'Authorization': `Basic ${this.credentials}`,
+                'Content-Type': 'application/json'
+            }
+        })
 
+    }
 
-// Run the server
-const run = async () => {
-    try {
-        const port = Number(process.env.PORT || 3000);
-        await fastify.listen({ port: port, host: '0.0.0.0' });
-    } catch (err) {
-        fastify.log.error(err);
-        process.exit(1);
+    async info()
+    {
+        const response = await this.pal_api.get('/info')
+        return response.data
     }
 }
-
-run();
 

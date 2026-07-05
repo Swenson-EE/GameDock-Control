@@ -21,34 +21,16 @@
  *   SOFTWARE.
  */
 
-import 'dotenv/config';
-import Fastify from 'fastify';
+import { type FastifyReply, type FastifyRequest } from "fastify";
+import { PalworldService } from "./palworld.service";
 
+export class PalworldController
+{
+    constructor(private readonly service: PalworldService) {}
 
-const fastify = Fastify({
-    logger: true
-})
-
-fastify.get('/ping', async(request, reply) => {
-    return { status: 'pong!' };
-})
-
-
-import { palworldRoutes } from './services/palworld/palworld.routes';
-fastify.register(palworldRoutes, { prefix: '/services/palworld' });
-
-
-
-// Run the server
-const run = async () => {
-    try {
-        const port = Number(process.env.PORT || 3000);
-        await fastify.listen({ port: port, host: '0.0.0.0' });
-    } catch (err) {
-        fastify.log.error(err);
-        process.exit(1);
+    async info(request: FastifyRequest, reply: FastifyReply)
+    {
+        const info = await this.service.info();
+        return reply.send(info);
     }
 }
-
-run();
-
