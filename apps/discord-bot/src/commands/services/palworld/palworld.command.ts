@@ -67,7 +67,18 @@ export class PalworldCommand
             flags: MessageFlags.Ephemeral
         })
     }
+
+    @Slash({
+        name: "metrics",
+        description: "Get Palworld server "
+    })
+    @SlashGroup("palworld")
+    async metrics(interaction: CommandInteraction): Promise<void> {
+        const response = await this.api.get('/metrics');
+        await interaction.reply({
+            content: JSON.stringify(response.data, null, 2),
+            flags: MessageFlags.Ephemeral
+        })
+    }
 }
-
-
 

@@ -31,4 +31,5 @@ export const palworldRoutes: FastifyPluginAsync = async (fastify: FastifyInstanc
     const controller = new PalworldController(service);
 
     fastify.get('/info', controller.info.bind(controller));
+    fastify.get('/metrics', controller.metrics.bind(controller));
 }

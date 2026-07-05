@@ -54,5 +54,11 @@ export class PalworldService
         const response = await this.pal_api.get('/info')
         return response.data
     }
+
+    async metrics()
+    {
+        const response = await this.pal_api.get('/metrics')
+        return response.data
+    }
 }
 

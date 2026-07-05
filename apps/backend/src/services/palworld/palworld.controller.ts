@@ -33,4 +33,10 @@ export class PalworldController
         const info = await this.service.info();
         return reply.send(info);
     }
+
+    async metrics(request: FastifyRequest, reply: FastifyReply)
+    {
+        const metrics = await this.service.metrics();
+        return reply.send(metrics);
+    }
 }
