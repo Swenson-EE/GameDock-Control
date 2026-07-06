@@ -21,10 +21,12 @@
  *   SOFTWARE.
  */
 
+import { DockerService } from "@backend/services/docker/docker.service.js";
+import { GameServer } from "../GameServer.js";
 import axios, { type AxiosInstance } from "axios";
 
 
-export class PalworldService
+export class PalworldGameServer extends GameServer
 {
     private readonly host_name: string;
     private readonly port: number;
@@ -32,10 +34,12 @@ export class PalworldService
 
     private readonly pal_api: AxiosInstance;
 
-    constructor(host_name?: string, port?: number)
+    constructor(dockerService: DockerService)
     {
-        this.host_name = host_name ?? process.env.PALWORLD_API_HOST ?? 'localhost';
-        this.port = port ?? parseInt(process.env.PALWORLD_API_PORT ?? '8212');
+        super(dockerService, 'palworld-server');
+
+        this.host_name = process.env.PALWORLD_API_HOST ?? 'localhost';
+        this.port = parseInt(process.env.PALWORLD_API_PORT ?? '8212');
 
         this.credentials = btoa(`${process.env.PALWORLD_USERNAME}:${process.env.PALWORLD_ADMIN_PASSWORD}`);
 
@@ -46,10 +50,8 @@ export class PalworldService
                 'Content-Type': 'application/json'
             }
         })
-
-        
-
     }
+
 
     async info()
     {
@@ -86,32 +88,7 @@ export class PalworldService
     }
 
 
-    async start()
-    {
-        // TODO: Startup palworld server
-    }
-
-    async restart()
-    {
-        const saveResponse = this.Save();
-        if (await this.Save() !== 200) {
-            return saveResponse;
-        }
-
-        // TODO: Restart server
-        return 200;
-    }
-
-    async stop(waitTime?: number, message?: string)
-    {
-        const response = await this.pal_api.post('/stop', {
-            waittime: waitTime ?? 30,
-            message: message ?? `Server is shutting down in ${waitTime ?? 30} seconds.`
-        })
-        return response.status;
-    }
-
-    async Save(): Promise<number>
+    async saveWorld(): Promise<number>
     {
        const response = await this.pal_api.post('/save');
        return response.status;
@@ -153,5 +130,5 @@ export class PalworldService
         }       
     }
 
-}
 
+}
