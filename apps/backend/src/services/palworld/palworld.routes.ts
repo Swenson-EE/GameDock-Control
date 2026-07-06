@@ -23,12 +23,14 @@
 
 import { type FastifyInstance, type FastifyPluginAsync } from "fastify";
 import { PalworldController } from "./palworld.controller.js";
-import { PalworldService } from "./palworld.service.js";
+import { PalworldGameServer } from "@backend/games/palworld/palworld.game-server.js";
+import { docker } from "@backend/services/docker/docker.js";
+import { DockerService } from "@backend/services/docker/docker.service.js";
 
 
 export const palworldRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) => {
-    const service = new PalworldService();
-    const controller = new PalworldController(service);
+    const server = new PalworldGameServer(new DockerService(docker));
+    const controller = new PalworldController(server);
 
     fastify.get('/info', controller.info.bind(controller));
     fastify.get('/metrics', controller.metrics.bind(controller));

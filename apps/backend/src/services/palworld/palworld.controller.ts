@@ -22,53 +22,58 @@
  */
 
 import { type FastifyReply, type FastifyRequest } from "fastify";
-import { PalworldService } from "./palworld.service.js";
+import { PalworldGameServer } from '@backend/games/palworld/palworld.game-server.js'
 
 export class PalworldController
 {
-    constructor(private readonly service: PalworldService) {}
+    constructor(private readonly server: PalworldGameServer) {}
 
     async info(request: FastifyRequest, reply: FastifyReply)
     {
-        const info = await this.service.info();
+        const info = await this.server.info();
         return reply.send(info);
     }
 
     async metrics(request: FastifyRequest, reply: FastifyReply)
     {
-        const metrics = await this.service.metrics();
+        const metrics = await this.server.metrics();
         return reply.send(metrics);
     }
 
     async getPlayers(request: FastifyRequest, reply: FastifyReply)
     {
-        const players = await this.service.getPlayers()
+        const players = await this.server.getPlayers()
         return reply.send(players)
     }
 
 
     async start(request: FastifyRequest, reply: FastifyReply)
     {
-        await this.service.start();
-        return reply.status(200).send()
+        await this.server.start();
+        const status = await this.server.status();
+        return reply.status(status.running ? 200 : 503).send()
     }
 
     async restart(request: FastifyRequest, reply: FastifyReply)
     {
-        await this.service.restart();
-        return reply.status(200).send()
+        await this.server.restart();
+        const status = await this.server.status();
+        return reply.status(status.running ? 200 : 503).send()
     }
 
     async stop(request: FastifyRequest, reply: FastifyReply)
     {
-        const { waitTime, message } = request.body as { waitTime?: number; message?: string };
-        const stopStatus = await this.service.stop(waitTime, message);
-        return reply.status(stopStatus).send()
+        //const { waitTime, message } = request.body as { waitTime?: number; message?: string };
+        //const stopStatus = await this.server.stop(waitTime, message);
+        await this.server.stop();
+        const status = await this.server.status();
+
+        return reply.status(!status.running ? 200 : 503).send()
     }
 
     async save(request: FastifyRequest, reply: FastifyReply)
     {
-        const saveStatus = await this.service.Save();
+        const saveStatus = await this.server.saveWorld();
         return reply.status(saveStatus).send()
     }
 
@@ -76,25 +81,25 @@ export class PalworldController
     async kickPlayer(request: FastifyRequest, reply: FastifyReply)
     {
         const { name, message } = request.body as { name: string, message?: string };
-        const player = await this.service.findPlayerByName(name);
+        const player = await this.server.findPlayerByName(name);
 
         if (player === undefined)
         {
             return reply.status(400).send();
         }
 
-        const kickStatus = await this.service.kickPlayer(player['userId'], message);
+        const kickStatus = await this.server.kickPlayer(player['userId'], message);
         return reply.status(kickStatus).send();
     }
 
 
     async kickAllPlayers(request: FastifyRequest, reply: FastifyReply)
     {
-        const { players } = await this.service.getPlayers();
+        const { players } = await this.server.getPlayers();
          
         const message = 'The server is current undergoing maintenance or a restart. Please check back in a few minutes.';
         const playerKickPromises = players.map(player => {
-            return this.service.kickPlayer(player['userId'], message)
+            return this.server.kickPlayer(player['userId'], message)
         })
 
         const data = await Promise.all(playerKickPromises);
@@ -108,21 +113,21 @@ export class PalworldController
     async banPlayer(request: FastifyRequest, reply: FastifyReply)
     {
         const { name, message } = request.body as { name: string, message?: string };
-        const player = await this.service.findPlayerByName(name);
+        const player = await this.server.findPlayerByName(name);
 
         if (player === undefined)
         {
             return reply.status(400).send();
         }
 
-        const banStatus = await this.service.banPlayer(player['userId'], message ?? 'You have been banned.');
+        const banStatus = await this.server.banPlayer(player['userId'], message ?? 'You have been banned.');
         return reply.status(banStatus).send();
     }
 
     async unbanPlayer(request: FastifyRequest, reply: FastifyReply)
     {
         const { userid } = request.body as { userid: string };
-        const unbanStatus = await this.service.unbanPlayer(userid);
+        const unbanStatus = await this.server.unbanPlayer(userid);
         return reply.status(unbanStatus).send();
     }
 }
