@@ -22,8 +22,8 @@
  */
 
 import { type FastifyInstance, type FastifyPluginAsync } from "fastify";
-import { PalworldController } from "./palworld.controller";
-import { PalworldService } from "./palworld.service";
+import { PalworldController } from "./palworld.controller.js";
+import { PalworldService } from "./palworld.service.js";
 
 
 export const palworldRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) => {

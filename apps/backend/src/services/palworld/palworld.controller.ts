@@ -22,7 +22,7 @@
  */
 
 import { type FastifyReply, type FastifyRequest } from "fastify";
-import { PalworldService } from "./palworld.service";
+import { PalworldService } from "./palworld.service.js";
 
 export class PalworldController
 {
@@ -115,7 +115,7 @@ export class PalworldController
             return reply.status(400).send();
         }
 
-        const banStatus = await this.service.banPlayer(player['userId'], message);
+        const banStatus = await this.service.banPlayer(player['userId'], message ?? 'You have been banned.');
         return reply.status(banStatus).send();
     }
 

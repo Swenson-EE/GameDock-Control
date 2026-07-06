@@ -34,7 +34,7 @@ fastify.get('/ping', async(request, reply) => {
 })
 
 
-import { palworldRoutes } from './services/palworld/palworld.routes';
+import { palworldRoutes } from './services/palworld/palworld.routes.js';
 fastify.register(palworldRoutes, { prefix: '/services/palworld' });
 
 
