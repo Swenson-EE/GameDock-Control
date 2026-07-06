@@ -40,7 +40,7 @@ export abstract class GameServer implements IGameServer
 
     async stop() 
     {
-        await this.docker.start(this.containerName);
+        await this.docker.stop(this.containerName);
     }
 
     async restart()
