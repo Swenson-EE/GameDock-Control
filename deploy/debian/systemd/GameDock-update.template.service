@@ -1,0 +1,15 @@
+[Unit]
+Description=GameDock Git Update Check
+After=network-online.target
+Before=GameDock.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User={{APP_USER}}
+WorkingDirectory={{PROJECT_DIR}}
+
+ExecStart={{PROJECT_DIR}}/update.sh
+
+[Install]
+WantedBy=multi-user.target

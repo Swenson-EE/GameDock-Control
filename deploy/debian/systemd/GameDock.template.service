@@ -1,0 +1,17 @@
+[Unit]
+Description=GameDock Application Suite
+After=network.target GameDock-update.service
+Requires=GameDock-update.service
+
+[Service]
+Type=simple
+User={{APP_USER}}
+WorkingDirectory={{PROJECT_DIR}}
+
+ExecStart=/usr/bin/npm start
+
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

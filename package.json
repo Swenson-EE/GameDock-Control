@@ -10,6 +10,8 @@
   ],
   "scripts": {
     "dev": "concurrently -n backend,frontend,bot \"npm:dev:backend\" \"npm:dev:frontend\" \"npm:dev:discord\"",
+    "start": "concurrently -n backend,frontend,bot \"npm:start:backend\" \"npm:start:frontend\" \"npm:start:discord\"",
+
 
     "dev:backend": "npm run dev --workspace @gamedock/backend",
     "dev:frontend": "npm run dev --workspace @gamedock/frontend",
