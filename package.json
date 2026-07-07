@@ -1,0 +1,33 @@
+{
+  "name": "gamedock-control",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n backend,frontend,bot \"npm:dev:backend\" \"npm:dev:frontend\" \"npm:dev:discord\"",
+
+    "dev:backend": "npm run dev --workspace @gamedock/backend",
+    "dev:frontend": "npm run dev --workspace @gamedock/frontend",
+    "dev:discord": "npm run dev --workspace @gamedock/discord-bot",
+
+    "build:backend": "npm run build --workspace @gamedock/backend",
+    "build:frontend": "npm run build --workspace @gamedock/frontend",
+    "build:discord": "npm run build --workspace @gamedock/discord-bot",
+
+    "start:backend": "npm run start --workspace @gamedock/backend",
+    "start:frontend": "npm run start --workspace @gamedock/frontend",
+    "start:discord": "npm run start --workspace @gamedock/discord-bot"    
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
+}
